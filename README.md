@@ -2,8 +2,6 @@
 
 A quick, pretty **WoW raid bench roller**. Enter your raiders, pick how many to bench, and let a d20 decide who sits out — then copy the result straight into Discord.
 
-🔗 Live at **[bench.geekxflood.io](https://bench.geekxflood.io)**
-
 ## How it works
 
 - Every raider on the roster rolls a **d20** (1–20).
