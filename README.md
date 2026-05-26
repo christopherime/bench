@@ -11,7 +11,7 @@ A quick, pretty **WoW raid bench roller**. Enter your raiders, pick how many to 
 - Ties on the bench boundary trigger an automatic **re-roll** (just like calling a re-roll on tied `/roll` results in game).
 - **Copy for Discord** puts the result on your clipboard as a ready-to-paste code block:
 
-  ```
+  ```txt
   BENCH ROLL  —  26 May 2026
   Benched (1): Illidan
   ----------------------------

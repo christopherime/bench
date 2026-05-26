@@ -1,3 +1,11 @@
 .DS_Store
 node_modules/
 *.log
+.editorconfig
+.markdownlint*
+.mcp*
+.prettier*
+.vscode/
+.idea/
+*.tmp
+*.temp
