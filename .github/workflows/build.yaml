@@ -50,7 +50,7 @@ jobs:
 
           echo "$GHCR_TOKEN" | docker login "$REGISTRY" -u "$ACTOR" --password-stdin
 
-          docker build "${tags[@]}" .
+          docker build --build-arg BUILD_REF="$short_sha" "${tags[@]}" .
 
           docker push "$image:latest"
           docker push "$image:$short_sha"
