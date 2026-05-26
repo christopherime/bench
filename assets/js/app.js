@@ -8,6 +8,8 @@ const els = {
   inc: $("inc"),
   dec: $("dec"),
   rollBtn: $("rollBtn"),
+  die: $("die"),
+  dieNum: $("dieNum"),
   rosterCount: $("roster-count"),
   error: $("error"),
   results: $("results"),
@@ -17,8 +19,9 @@ const els = {
   rerollBtn: $("rerollBtn"),
 };
 
-// Holds the most recent roll so "Copy for Discord" and "Roll again" work.
+// Holds the most recent roll so "Copy for Discord" and "Re-cast" work.
 let lastRoll = null;
+let scrambleTimer = null;
 
 /* ---------- Roster parsing ---------- */
 function parseNames() {
@@ -60,6 +63,24 @@ function isAmbiguous(sortedRolls, benchCount) {
   return sortedRolls[benchCount - 1].roll === sortedRolls[benchCount].roll;
 }
 
+/* ---------- The die ---------- */
+function startDieScramble() {
+  els.die.classList.remove("settle");
+  els.die.classList.add("casting");
+  scrambleTimer = setInterval(() => {
+    els.dieNum.textContent = d20();
+  }, 60);
+}
+function settleDie(value) {
+  clearInterval(scrambleTimer);
+  els.die.classList.remove("casting");
+  els.dieNum.textContent = value;
+  // restart the settle pop
+  els.die.classList.remove("settle");
+  void els.die.offsetWidth; // reflow so the animation replays
+  els.die.classList.add("settle");
+}
+
 /* ---------- Rendering ---------- */
 function renderResults(result) {
   els.benchNames.textContent = result.benched.join(", ");
@@ -69,11 +90,11 @@ function renderResults(result) {
     const benched = result.benchedSet.has(r.name);
     const li = document.createElement("li");
     li.className = "roll-row" + (benched ? " benched" : "");
-    li.style.animationDelay = `${i * 45}ms`;
+    li.style.animationDelay = `${i * 55}ms`;
     li.innerHTML = `
       <span class="roll-badge">${r.roll}</span>
       <span class="roll-name"></span>
-      <span class="roll-tag ${benched ? "" : "safe"}">${benched ? "BENCH" : "RAID"}</span>
+      <span class="roll-tag ${benched ? "benchtag" : "safe"}">${benched ? "BENCH" : "RAID"}</span>
     `;
     li.querySelector(".roll-name").textContent = r.name;
     els.rollList.appendChild(li);
@@ -111,7 +132,6 @@ async function copyToClipboard(text) {
     await navigator.clipboard.writeText(text);
     return;
   }
-  // Fallback for non-secure contexts.
   const ta = document.createElement("textarea");
   ta.value = text;
   ta.style.position = "fixed";
@@ -129,7 +149,7 @@ function doRoll() {
   const benchCount = parseInt(els.benchCount.value, 10) || 0;
 
   if (names.length < 2) {
-    els.error.textContent = "Add at least 2 raiders to roll.";
+    els.error.textContent = "Summon at least 2 raiders before casting.";
     return;
   }
   if (new Set(names.map((n) => n.toLowerCase())).size !== names.length) {
@@ -141,16 +161,20 @@ function doRoll() {
     return;
   }
   if (benchCount >= names.length) {
-    els.error.textContent = `Can't bench ${benchCount} of ${names.length} — leave someone in the raid.`;
+    els.error.textContent = `Can't bench ${benchCount} of ${names.length} — someone has to raid.`;
     return;
   }
 
-  els.rollBtn.classList.add("rolling");
+  els.rollBtn.classList.add("casting");
+  startDieScramble();
+
   setTimeout(() => {
     lastRoll = rollBench(names, benchCount);
+    els.rollBtn.classList.remove("casting");
+    // The die settles on fate's lowest roll — the one that decides the bench.
+    settleDie(lastRoll.rolls[0].roll);
     renderResults(lastRoll);
-    els.rollBtn.classList.remove("rolling");
-  }, 550);
+  }, 650);
 }
 
 async function doCopy() {
@@ -159,11 +183,11 @@ async function doCopy() {
     await copyToClipboard(toDiscord(lastRoll));
     els.copyBtn.classList.add("copied");
     els.copyBtn.querySelector(".copy-label").textContent = "Copied!";
-    els.copyBtn.querySelector(".copy-icon").textContent = "✅";
+    els.copyBtn.querySelector(".copy-icon").textContent = "✓";
     setTimeout(() => {
       els.copyBtn.classList.remove("copied");
       els.copyBtn.querySelector(".copy-label").textContent = "Copy for Discord";
-      els.copyBtn.querySelector(".copy-icon").textContent = "📋";
+      els.copyBtn.querySelector(".copy-icon").textContent = "⧉";
     }, 1800);
   } catch (e) {
     els.error.textContent = "Couldn't copy to clipboard.";

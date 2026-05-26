@@ -2,77 +2,110 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bench — WoW Raid Bench Roller</title>
-  <meta name="description" content="Roll a d20 for every raider and let fate decide who sits the bench. Copy the result straight into Discord." />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Bench — cast the raid bench</title>
+  <meta name="description" content="Cast a d20 for every raider and let fate decide who sits the bench. Copy the verdict straight into Discord." />
+  <meta name="theme-color" content="#0a0a0f" />
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 <body>
-  <div class="bg-glow"></div>
+  <!-- Atmosphere -->
+  <div class="aurora" aria-hidden="true"></div>
+  <div class="vignette" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
 
-  <main class="wrap">
-    <header class="hero">
-      <div class="dice-mark" aria-hidden="true">
-        <span>20</span>
-      </div>
-      <h1>Bench Roller</h1>
-      <p class="tagline">Every raider rolls a <strong>d20</strong>. The lowest rolls sit out. Ties get re-rolled. Fate, not favouritism.</p>
+  <main class="stage">
+
+    <header class="masthead">
+      <p class="kicker"><span></span>Raid Bench Rite<span></span></p>
+      <h1 class="title">BENCH</h1>
+      <p class="lede">Every raider casts a <em>d20</em>. The lowest rolls sit out. Ties are re-cast. Let fate hold the grudge, not you.</p>
     </header>
 
-    <section class="card" aria-label="Roster setup">
-      <label class="field">
-        <span class="field-label">Raiders</span>
-        <span class="field-hint">One name per line, or separated by commas.</span>
-        <textarea id="names" rows="7" spellcheck="false"
+    <!-- The die -->
+    <section class="dais" aria-hidden="true">
+      <div class="die" id="die">
+        <div class="die-ring"></div>
+        <svg class="die-art" viewBox="0 0 120 120" role="img">
+          <defs>
+            <linearGradient id="goldFace" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#fbe2a0" />
+              <stop offset="0.5" stop-color="#e8b349" />
+              <stop offset="1" stop-color="#9a6f1f" />
+            </linearGradient>
+          </defs>
+          <!-- outer icosahedron silhouette -->
+          <polygon class="d-edge d-fill" points="60,4 110,33 110,87 60,116 10,87 10,33" />
+          <!-- facets -->
+          <polygon class="d-edge d-facet" points="60,4 110,33 60,46 10,33" />
+          <polygon class="d-edge d-facet2" points="110,33 110,87 60,72 60,46" />
+          <polygon class="d-edge d-facet2" points="10,33 10,87 60,72 60,46" />
+          <polygon class="d-edge d-facet" points="10,87 60,116 60,72" />
+          <polygon class="d-edge d-facet" points="110,87 60,116 60,72" />
+          <!-- center top face -->
+          <polygon class="d-edge d-top" points="60,46 110,33 60,72 10,33" />
+        </svg>
+        <span class="die-num" id="dieNum">20</span>
+      </div>
+    </section>
+
+    <!-- Console -->
+    <section class="console">
+      <div class="field">
+        <label class="field-label" for="names">The Roster</label>
+        <p class="field-hint">One name per line — or comma-separated.</p>
+        <textarea id="names" rows="6" spellcheck="false" autocomplete="off"
           placeholder="Thrall&#10;Jaina&#10;Sylvanas&#10;Anduin&#10;Illidan"></textarea>
-      </label>
+        <p class="roster-count" id="roster-count"></p>
+      </div>
 
       <div class="controls">
-        <label class="field count-field">
-          <span class="field-label">Bench how many?</span>
+        <div class="field bench-field">
+          <label class="field-label" for="benchCount">Sit out</label>
           <div class="stepper">
-            <button type="button" id="dec" aria-label="Decrease">−</button>
-            <input id="benchCount" type="number" min="1" value="1" inputmode="numeric" />
-            <button type="button" id="inc" aria-label="Increase">+</button>
+            <button type="button" id="dec" aria-label="Fewer">–</button>
+            <input id="benchCount" type="number" min="1" value="1" inputmode="numeric" aria-label="Number to bench" />
+            <button type="button" id="inc" aria-label="More">+</button>
           </div>
-        </label>
+        </div>
 
-        <button id="rollBtn" class="roll-btn" type="button">
-          <span class="roll-btn-icon">🎲</span>
-          <span>Roll the bench</span>
+        <button id="rollBtn" class="cast" type="button">
+          <span class="cast-shimmer" aria-hidden="true"></span>
+          <span class="cast-label">Cast the roll</span>
         </button>
       </div>
 
-      <p id="roster-count" class="roster-count"></p>
       <p id="error" class="error" role="alert"></p>
     </section>
 
-    <section id="results" class="results" hidden aria-live="polite">
-      <div class="bench-banner">
-        <span class="bench-banner-label">Benched</span>
-        <span id="bench-names" class="bench-banner-names"></span>
+    <!-- Verdict -->
+    <section id="results" class="verdict" hidden aria-live="polite">
+      <div class="seal">
+        <span class="seal-tag">Benched by fate</span>
+        <span id="bench-names" class="seal-names"></span>
       </div>
 
-      <ul id="roll-list" class="roll-list"></ul>
+      <ol id="roll-list" class="rolls"></ol>
 
-      <div class="result-actions">
-        <button id="copyBtn" class="copy-btn" type="button">
-          <span class="copy-icon">📋</span>
+      <div class="verdict-actions">
+        <button id="copyBtn" class="copy" type="button">
+          <span class="copy-icon" aria-hidden="true">⧉</span>
           <span class="copy-label">Copy for Discord</span>
         </button>
-        <button id="rerollBtn" class="ghost-btn" type="button">Roll again</button>
+        <button id="rerollBtn" class="reroll" type="button">Re-cast</button>
       </div>
     </section>
 
-    <footer class="foot">
+    <footer class="footer">
       <span>bench.geekxflood.io</span>
-      <span class="dot">•</span>
-      <span>rolls happen in your browser — nothing is stored</span>
+      <span class="sep" aria-hidden="true">✦</span>
+      <span>cast in your browser · nothing stored</span>
     </footer>
+
   </main>
 
   <script src="assets/js/app.js" defer></script>
