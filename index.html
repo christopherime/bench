@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bench — WoW Raid Bench Roller</title>
+  <meta name="description" content="Roll a d20 for every raider and let fate decide who sits the bench. Copy the result straight into Discord." />
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <div class="bg-glow"></div>
+
+  <main class="wrap">
+    <header class="hero">
+      <div class="dice-mark" aria-hidden="true">
+        <span>20</span>
+      </div>
+      <h1>Bench Roller</h1>
+      <p class="tagline">Every raider rolls a <strong>d20</strong>. The lowest rolls sit out. Ties get re-rolled. Fate, not favouritism.</p>
+    </header>
+
+    <section class="card" aria-label="Roster setup">
+      <label class="field">
+        <span class="field-label">Raiders</span>
+        <span class="field-hint">One name per line, or separated by commas.</span>
+        <textarea id="names" rows="7" spellcheck="false"
+          placeholder="Thrall&#10;Jaina&#10;Sylvanas&#10;Anduin&#10;Illidan"></textarea>
+      </label>
+
+      <div class="controls">
+        <label class="field count-field">
+          <span class="field-label">Bench how many?</span>
+          <div class="stepper">
+            <button type="button" id="dec" aria-label="Decrease">−</button>
+            <input id="benchCount" type="number" min="1" value="1" inputmode="numeric" />
+            <button type="button" id="inc" aria-label="Increase">+</button>
+          </div>
+        </label>
+
+        <button id="rollBtn" class="roll-btn" type="button">
+          <span class="roll-btn-icon">🎲</span>
+          <span>Roll the bench</span>
+        </button>
+      </div>
+
+      <p id="roster-count" class="roster-count"></p>
+      <p id="error" class="error" role="alert"></p>
+    </section>
+
+    <section id="results" class="results" hidden aria-live="polite">
+      <div class="bench-banner">
+        <span class="bench-banner-label">Benched</span>
+        <span id="bench-names" class="bench-banner-names"></span>
+      </div>
+
+      <ul id="roll-list" class="roll-list"></ul>
+
+      <div class="result-actions">
+        <button id="copyBtn" class="copy-btn" type="button">
+          <span class="copy-icon">📋</span>
+          <span class="copy-label">Copy for Discord</span>
+        </button>
+        <button id="rerollBtn" class="ghost-btn" type="button">Roll again</button>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <span>bench.geekxflood.io</span>
+      <span class="dot">•</span>
+      <span>rolls happen in your browser — nothing is stored</span>
+    </footer>
+  </main>
+
+  <script src="assets/js/app.js" defer></script>
+</body>
+</html>
