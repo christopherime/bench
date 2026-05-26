@@ -115,7 +115,7 @@ function toDiscord(result) {
   const benchedCount = result.benched.length;
   const lines = [];
   lines.push("```");
-  lines.push(`BENCH ROLL  —  ${date}`);
+  lines.push(`BENCH ROLL  ·  ${date}`);
   lines.push(`Benched (${benchedCount}): ${result.benched.join(", ")}`);
   lines.push("-".repeat(28));
   result.rolls.forEach((r) => {
@@ -153,7 +153,7 @@ function doRoll() {
     return;
   }
   if (new Set(names.map((n) => n.toLowerCase())).size !== names.length) {
-    els.error.textContent = "Two raiders share the same name — make them unique.";
+    els.error.textContent = "Two raiders share the same name; make them unique.";
     return;
   }
   if (benchCount < 1) {
@@ -161,7 +161,7 @@ function doRoll() {
     return;
   }
   if (benchCount >= names.length) {
-    els.error.textContent = `Can't bench ${benchCount} of ${names.length} — someone has to raid.`;
+    els.error.textContent = `Can't bench ${benchCount} of ${names.length}; someone has to raid.`;
     return;
   }
 

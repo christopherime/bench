@@ -6,21 +6,28 @@
 :root {
   --obsidian:   #08080d;
   --obsidian-2: #0d0d15;
-  --panel:      rgba(20, 19, 28, 0.62);
+  --panel:      rgba(20, 19, 28, 0.88);
   --panel-edge: rgba(232, 179, 73, 0.16);
   --panel-edge-strong: rgba(232, 179, 73, 0.42);
 
   --ink:    #ece6d6;
   --muted:  #948c9e;
-  --faint:  #5f5868;
+  --faint:  #827b8e;
 
   --gold:      #e8b349;
   --gold-lite: #fbe2a0;
+  --gold-hi:   #fdf8ee;
   --gold-deep: #8c6418;
 
   --ember:  #ff5d4d;
   --ember-deep: #5a1410;
   --arcane: #57d3e6;
+
+  /* dark ink for text/marks that sit on gold or ember fills */
+  --on-gold:  #1c1305;
+  --on-ember: #2a0a07;
+
+  --die-body: #14131b;
 
   --display: "Cinzel", Georgia, serif;
   --body:    "Spectral", Georgia, serif;
@@ -33,7 +40,7 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-html { -webkit-text-size-adjust: 100%; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 
 body {
   font-family: var(--body);
@@ -125,7 +132,7 @@ body {
   font-size: clamp(3.6rem, 19vw, 7rem);
   line-height: 0.9;
   letter-spacing: 0.04em;
-  background: linear-gradient(180deg, #fff 0%, var(--gold-lite) 42%, var(--gold) 70%, var(--gold-deep) 100%);
+  background: linear-gradient(180deg, var(--gold-hi) 0%, var(--gold-lite) 42%, var(--gold) 70%, var(--gold-deep) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -184,7 +191,7 @@ body {
   transition: transform 0.35s cubic-bezier(.2,.8,.2,1);
 }
 .d-edge   { stroke: var(--gold); stroke-width: 1; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
-.d-fill   { fill: #14131b; }
+.d-fill   { fill: var(--die-body); }
 .d-facet  { fill: rgba(232, 179, 73, 0.06); }
 .d-facet2 { fill: rgba(232, 179, 73, 0.12); }
 .d-top    { fill: url(#goldFace); opacity: 0.92; stroke: var(--gold-lite); }
@@ -197,7 +204,7 @@ body {
   font-family: var(--display);
   font-weight: 800;
   font-size: clamp(2rem, 9vw, 2.7rem);
-  color: #20160a;
+  color: var(--on-gold);
   text-shadow: 0 1px 0 rgba(255,255,255,0.35);
   font-variant-numeric: tabular-nums;
 }
@@ -227,8 +234,8 @@ body {
   border: 1px solid var(--panel-edge);
   border-radius: var(--r-lg);
   padding: 1.5rem;
-  backdrop-filter: blur(14px) saturate(1.2);
-  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   box-shadow:
     0 30px 70px -28px rgba(0,0,0,0.85),
     inset 0 1px 0 rgba(255,255,255,0.04);
@@ -288,6 +295,7 @@ input[type="number"]:focus {
 
 .roster-count {
   font-family: var(--mono);
+  font-weight: 500;
   font-size: 0.74rem;
   color: var(--muted);
   margin-top: 0.6rem;
@@ -317,7 +325,7 @@ input[type="number"]:focus {
   transition: background 0.15s, color 0.15s;
   -webkit-tap-highlight-color: transparent;
 }
-.stepper button:active { background: var(--gold); color: #1a1206; }
+.stepper button:active { background: var(--gold); color: var(--on-gold); }
 .stepper button:first-child { border-radius: var(--r-md) 0 0 var(--r-md); border-right: none; }
 .stepper button:last-child  { border-radius: 0 var(--r-md) var(--r-md) 0; border-left: none; }
 .stepper input {
@@ -342,7 +350,7 @@ input[type="number"]:focus {
   border-radius: var(--r-md);
   cursor: pointer;
   overflow: hidden;
-  color: #1c1305;
+  color: var(--on-gold);
   font-family: var(--display);
   font-weight: 700;
   font-size: 1.05rem;
@@ -365,6 +373,15 @@ input[type="number"]:focus {
 .cast.casting { pointer-events: none; filter: saturate(1.2) brightness(1.05); }
 .cast.casting .cast-shimmer { animation: shimmer 0.8s linear infinite; }
 @keyframes shimmer { to { transform: translateX(120%); } }
+
+/* Keyboard focus — outline (not box-shadow) so it survives .cast's overflow:hidden */
+.cast:focus-visible,
+.copy:focus-visible,
+.reroll:focus-visible,
+.stepper button:focus-visible {
+  outline: 2px solid var(--gold-lite);
+  outline-offset: 2px;
+}
 
 .error {
   color: var(--ember);
@@ -456,7 +473,7 @@ input[type="number"]:focus {
   border-radius: 999px;
 }
 .roll-tag.safe   { color: var(--arcane); border: 1px solid rgba(87,211,230,0.35); background: rgba(87,211,230,0.08); }
-.roll-tag.benchtag { color: #2a0a07; background: var(--ember); }
+.roll-tag.benchtag { color: var(--on-ember); background: var(--ember); }
 
 /* ---------- Verdict actions ---------- */
 .verdict-actions { display: flex; gap: 0.7rem; margin-top: 1.4rem; }
@@ -501,6 +518,7 @@ input[type="number"]:focus {
   flex-wrap: wrap;
   gap: 0.6rem;
   font-family: var(--mono);
+  font-weight: 500;
   font-size: 0.72rem;
   letter-spacing: 0.06em;
   color: var(--faint);
@@ -537,4 +555,16 @@ input[type="number"]:focus {
     transition-duration: 0.01ms !important;
   }
   .die.casting .die-art { animation: none; }
+}
+
+/* ---------- Forced colors (Windows High Contrast) ---------- */
+/* The clipped gradient renders the title transparent; restore a solid
+   system color so "BENCH" stays visible when colors are overridden. */
+@media (forced-colors: active) {
+  .title {
+    background: none;
+    color: CanvasText;
+    -webkit-text-fill-color: currentColor;
+    filter: none;
+  }
 }
