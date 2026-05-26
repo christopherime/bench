@@ -31,6 +31,6 @@ The bench logic: sort all d20 rolls ascending, the lowest `benchCount` sit out. 
 
 ## Deployment
 
-Push to `main` triggers `.github/workflows/build.yaml`, which builds and pushes `ghcr.io/geekxflood/bench` (tags: `latest`, short SHA, timestamp). The workflow deliberately uses **only `actions/*`** and plain `docker` shell commands — do not introduce `docker/*` or other third-party actions (the cluster's runners can't reliably download them).
+Push to `main` triggers `.github/workflows/build.yaml`, which builds and pushes `ghcr.io/christopherime/bench` (tags: `latest`, short SHA, timestamp). The workflow deliberately uses **only `actions/*`** and plain `docker` shell commands — do not introduce `docker/*` or other third-party actions (the cluster's runners can't reliably download them).
 
 `nginx.conf` serves the static files on `:8080` and exposes `/healthz` for Kubernetes probes. Deployment is GitOps via ArgoCD (Helm chart + Application live in separate `geekxflood` repos; `argocd-image-updater` redeploys on new images).
